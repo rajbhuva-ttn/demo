@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Page Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .navigation-buttons {
+            text-align: center;
+        }
+
+        .navigation-buttons button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navigation-buttons button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .navigation-buttons button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+
+        .preview {
+            padding: 20px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .preview h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        .preview p {
+            line-height: 1.6;
+        }
+
+        .form-page {
+            display: none;
+        }
+
+        .form-page.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multi-Page Registration Form</h1>
+
+    <div class="form-container">
+        <!-- Page 1 -->
+        <div class="form-page active" id="page1">
+            <h2>Page 1: Personal Information</h2>
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required>
+
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+
+        <!-- Page 2 -->
+        <div class="form-page" id="page2">
+            <h2>Page 2: Contact Information</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+
+        <!-- Page 3 -->
+        <div class="form-page" id="page3">
+            <h2>Page 3: Address</h2>
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+
+            <label for="zip">Zip Code:</label>
+            <input type="text" id="zip" name="zip" required>
+        </div>
+
+        <div class="navigation-buttons">
+            <button type="button" id="prevButton">Previous</button>
+            <button type="button" id="nextButton">Next</button>
+            <button type="button" id="submitButton" style="display: none;">Submit</button>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview" id="previewSection" style="display: none;">
+            <h2>Form Preview</h2>
+            <p id="previewContent"></p>
+        </div>
+    </div>
+
+    <script>
+        const formPages = document.querySelectorAll('.form-page');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const submitButton = document.getElementById('submitButton');
+        const previewSection = document.getElementById('previewSection');
+        const previewContent = document.getElementById('previewContent');
+        let currentPage = 0;
+
+        function showPage(pageIndex) {
+            formPages.forEach((page, index) => {
+                page.classList.toggle('active', index === pageIndex);
+            });
+            prevButton.style.display = pageIndex === 0 ? 'none' : 'inline-block';
+            nextButton.style.display = pageIndex === formPages.length - 1 ? 'none' : 'inline-block';
+            submitButton.style.display = pageIndex === formPages.length - 1 ? 'inline-block' : 'none';
+        }
+
+        function validatePage(pageIndex) {
+            const inputs = formPages[pageIndex].querySelectorAll('input');
+            return Array.from(inputs).every(input => input.reportValidity());
+        }
+
+        nextButton.addEventListener('click', () => {
+            if (validatePage(currentPage)) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            currentPage--;
+            showPage(currentPage);
+        });
+
+        submitButton.addEventListener('click', () => {
+            const inputs = document.querySelectorAll('input');
+            const formData = {};
+            inputs.forEach(input => formData[input.name] = input.value);
+
+            const previewData = Object.entries(formData).map(
+                ([key, value]) => `<strong>${key}:</strong> ${value}`
+            ).join('<br>');
+
+            previewContent.innerHTML = previewData;
+            previewSection.style.display = 'block';
+        });
+
+        // Initialize the form
+        showPage(currentPage);
+    </script>
+</body>
+</html>
